@@ -293,13 +293,13 @@ app.post('/move', (request, response) => {
     let suggestedMove = MySnake.direction;
 
     
-//    if(request.body.you.health < 30){
+    if(request.body.you.health < 30){
         let closestFoodArr = findClosestFood(MySnake, Board);
         console.log('Closest Food: ');
         console.log( closestFoodArr[0]);
-//         suggestedMove = getClosestFood(closestFoodArr, MySnake);
-        getPath(closestFoodArr, MySnake, Board);
-//    }
+         suggestedMove = getClosestFood(closestFoodArr, MySnake);
+//        getPath(closestFoodArr, MySnake, Board);
+    }
     
     //override with suggest move is it is still available
     console.log('Direction: ' + MySnake.direction);
