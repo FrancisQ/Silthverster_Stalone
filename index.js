@@ -95,7 +95,6 @@ function checkBoundaries(head, board, movesArr){
         //check if direction has been already removed, if not remove it
         removeArrayOfMoves(walls, movesArr);
     }
-//    console.log('Invalid moves due to walls: ' + walls);
     
 }
 
@@ -118,7 +117,6 @@ function snakeCollision(snake, movesArray){
             invalidMoves.push('up');
         }
     });
-//    console.log('Invalid moves due to body: ' + invalidMoves);
 
     removeArrayOfMoves(invalidMoves, movesArray);
 }
@@ -165,6 +163,13 @@ function findClosestFood(snake, board){
 
     //check for own body;
     snakeCollision(snake, movesArr);
+      
+    //check for other snakes
+    board.snakes.forEach(function(snakeElement){
+        let tempSnake = new Snake(snakeElement.body);
+        snakeCollision(tempSnake, movesArr);
+    });
+
 
 }
 
@@ -173,7 +178,6 @@ function getClosestFood(closestFoodArr, snake){
         if (closestFoodArr.length !=0){
             const food = closestFoodArr[0];
             let preferredMove = snake.direction;
-//            console.log(food);
             
             if (food.distanceX + food.distanceY != 0){
                 if (food.distanceX >= food.distanceY){
@@ -183,21 +187,18 @@ function getClosestFood(closestFoodArr, snake){
                         preferredMove = 'left';
                     }
                 }else if (food.distanceY >= food.distanceX){
-//                    console.log('Y is greater than X');
                     if (food.y > snake.head.y){
                         preferredMove = 'down';
                     }else if (food.y < snake.head.y){
                         preferredMove = 'up';
                     }
                 }
-                console.log( 'Preferred Move: ' + preferredMove);
                 return preferredMove;
             }
         }
     }
 
 function getPath(closestFoodArr, snake, board){
-//    console.log('Get PAth!');
     //if there is food
     if(closestFoodArr.length != 0 ){
         const target = closestFoodArr[0];
@@ -255,10 +256,7 @@ function getPath(closestFoodArr, snake, board){
             nodesArray.sort(function(a,b){
                 return a.score - b.score;
             })
-//            console.log(nodesArray[0]);
         }
-        console.log(nodesArray);
-
     }
 }
 
@@ -285,31 +283,23 @@ app.post('/move', (request, response) => {
     let MySnake = new Snake(request.body.you.body);
     const Board = request.body.board;
     
-    console.log(request.body.turn);
     
-    console.log( 'Snake - X: '+MySnake.head.x+' Y: ' +MySnake.head.y);                      
     //set direction, account for walls and body
     basicSurvival(MySnake, Board, moves);
-    console.log("Test");
     let suggestedMove = MySnake.direction;
 
     
     if(request.body.you.health < 30){
         let closestFoodArr = findClosestFood(MySnake, Board);
-        console.log('Closest Food: ');
-        console.log( closestFoodArr[0]);
         suggestedMove = getClosestFood(closestFoodArr, MySnake);
 //        getPath(closestFoodArr, MySnake, Board);
     }
     
     //override with suggest move is it is still available
-    console.log('Direction: ' + MySnake.direction);
     if(moves.indexOf(suggestedMove) != -1){
-            console.log('defaulted to suggest move: ' + suggestedMove);
             moves = [suggestedMove];
         }
     
-    console.log('Move:' + moves);
     
   // Response data
     const data = {
