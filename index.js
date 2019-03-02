@@ -290,6 +290,7 @@ app.post('/move', (request, response) => {
     console.log( 'Snake - X: '+MySnake.head.x+' Y: ' +MySnake.head.y);                      
     //set direction, account for walls and body
     basicSurvival(MySnake, Board, moves);
+    console.log("Test");
     let suggestedMove = MySnake.direction;
 
     
@@ -297,7 +298,7 @@ app.post('/move', (request, response) => {
         let closestFoodArr = findClosestFood(MySnake, Board);
         console.log('Closest Food: ');
         console.log( closestFoodArr[0]);
-         suggestedMove = getClosestFood(closestFoodArr, MySnake);
+        suggestedMove = getClosestFood(closestFoodArr, MySnake);
 //        getPath(closestFoodArr, MySnake, Board);
     }
     
